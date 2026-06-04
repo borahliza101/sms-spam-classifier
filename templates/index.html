@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+  <title>SMS Spam Classifier</title>
+
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 3rem auto;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+
+    .spam {
+      background: #ffd6d6;
+      color: #b00020;
+    }
+
+    .ham {
+      background: #d6ffd8;
+      color: #0a6d1d;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <h1>SMS Spam Classifier</h1>
+
+  <form id="form">
+
+    <textarea
+      id="msg"
+      name="message"
+      placeholder="Enter your message here..."
+    ></textarea>
+
+    <br>
+
+    <button type="submit">
+      Check
+    </button>
+
+  </form>
+
+  <div id="out"></div>
+
+  <script>
+
+    document.getElementById('form').onsubmit = async (e) => {
+
+      e.preventDefault();
+
+      const msg = document.getElementById('msg').value;
+
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: msg
+        })
+      });
+
+      const data = await res.json();
+
+      const div = document.getElementById('out');
+
+      if (data.error) {
+        div.innerHTML = data.error;
+        return;
+      }
+
+      div.innerHTML = `
+        <div class="result ${data.label}">
+          <strong>${data.label.toUpperCase()}</strong>
+          — Probability ${(data.probability * 100).toFixed(2)}%
+        </div>
+      `;
+    };
+
+  </script>
+
+</body>
+</html>
