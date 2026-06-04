@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import joblib
+import nltk
+
+nltk.download('punkt')
+nltk.download('stopwords')
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
